@@ -8,30 +8,8 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Full Constituents Database
+// Dataset containing ONLY North 24 Parganas, South 24 Parganas, and Howrah
 const constituentsData = [
-  // Hooghly
-  { name: "Rishra", district: "Hooghly" },
-  { name: "Rishra (P)", district: "Hooghly" },
-  { name: "Serampore", district: "Hooghly" },
-  { name: "Baidyabati", district: "Hooghly" },
-  { name: "Champdani", district: "Hooghly" },
-  { name: "Bhadreswar", district: "Hooghly" },
-  { name: "Chandannagar", district: "Howrah / Hooghly" }, // Chandannagar Municipal Corporation
-  { name: "Hugli-Chinsurah", district: "Hooghly" },
-  { name: "Bansberia", district: "Hooghly" },
-  { name: "Konnagar", district: "Hooghly" },
-  { name: "Uttarpara Kotrung", district: "Hooghly" },
-  { name: "Nabagram Colony", district: "Hooghly" },
-  { name: "Kanaipur", district: "Hooghly" },
-  { name: "Raghunathpur (PS-Dankuni)", district: "Hooghly" },
-  { name: "Dankuni", district: "Hooghly" },
-  { name: "Panchghara", district: "Hooghly" },
-  { name: "Baruipara", district: "Hooghly" },
-  { name: "Balarambati", district: "Hooghly" },
-  { name: "Singur", district: "Hooghly" },
-  { name: "Bora", district: "Hooghly" },
-
   // North 24 Parganas
   { name: "Raigachhi", district: "North 24 Parganas" },
   { name: "Barasat", district: "North 24 Parganas" },
@@ -191,29 +169,28 @@ const constituentsData = [
   { name: "Jaypur Bil", district: "Howrah" }
 ];
 
-// Search API Endpoint
 app.get('/api/search', (req, res) => {
   const query = req.query.place?.trim();
 
   if (!query) {
-    return res.status(400).json({ result: "Please provide a place name." });
+    return res.status(400).json({ result: "Please enter a location." });
   }
 
   const queryLower = query.toLowerCase();
 
-  // 1. Exact Match
+  // 1. Check Exact Match
   const exactMatch = constituentsData.find(item => item.name.toLowerCase() === queryLower);
   if (exactMatch) {
     return res.json({ result: `within ${exactMatch.district}` });
   }
 
-  // 2. Partial Substring Match
-  const partials = constituentsData.filter(item => item.name.toLowerCase().includes(queryLower));
-  if (partials.length > 0) {
-    return res.json({ result: `within ${partials[0].district}` });
+  // 2. Check Partial Substring Match
+  const partialMatch = constituentsData.find(item => item.name.toLowerCase().includes(queryLower));
+  if (partialMatch) {
+    return res.json({ result: `within ${partialMatch.district}` });
   }
 
-  // 3. Strict Fuzzy Typo Match (Distance threshold of 2 to avoid false positives)
+  // 3. Strict Fuzzy Match (Typo tolerance)
   const fuzzy = constituentsData
     .map(item => ({ ...item, dist: levenshtein.get(queryLower, item.name.toLowerCase()) }))
     .sort((a, b) => a.dist - b.dist)[0];
@@ -222,8 +199,8 @@ app.get('/api/search', (req, res) => {
     return res.json({ result: `within ${fuzzy.district}` });
   }
 
-  // Fallback for missing entries
+  // Fallback for any place not listed under the 3 allowed districts
   return res.json({ result: "not within any of this three districts" });
 });
 
-app.listen(PORT, () => console.log(`App running on port ${PORT}`));
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
