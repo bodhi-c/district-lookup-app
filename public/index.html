@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>District Lookup Portal</title>
+  <style>
+    body { font-family: system-ui, sans-serif; display: flex; justify-content: center; padding-top: 80px; background: #f8fafc; }
+    .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+    .input-group { display: flex; gap: 8px; margin-top: 15px; }
+    input { flex: 1; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 15px; }
+    button { padding: 10px 16px; background: #2563eb; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; }
+    button:hover { background: #1d4ed8; }
+    .result { margin-top: 20px; font-size: 16px; font-weight: bold; color: #0f172a; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>District Lookup Portal</h2>
+    <div class="input-group">
+      <input type="text" id="placeInput" placeholder="Enter place name...">
+      <button onclick="search()">Search</button>
+    </div>
+    <div id="output" class="result"></div>
+  </div>
+
+  <script>
+    async function search() {
+      const val = document.getElementById('placeInput').value;
+      const out = document.getElementById('output');
+      if (!val) return;
+      out.innerText = "Searching...";
+      try {
+        const res = await fetch(`/api/search?place=${encodeURIComponent(val)}`);
+        const data = await res.json();
+        out.innerText = data.result;
+      } catch (e) {
+        out.innerText = "Error connecting to server.";
+      }
+    }
+  </script>
+</body>
+</html>
