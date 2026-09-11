@@ -8,8 +8,30 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Database Array
+// Full Constituents Database
 const constituentsData = [
+  // Hooghly
+  { name: "Rishra", district: "Hooghly" },
+  { name: "Rishra (P)", district: "Hooghly" },
+  { name: "Serampore", district: "Hooghly" },
+  { name: "Baidyabati", district: "Hooghly" },
+  { name: "Champdani", district: "Hooghly" },
+  { name: "Bhadreswar", district: "Hooghly" },
+  { name: "Chandannagar", district: "Howrah / Hooghly" }, // Chandannagar Municipal Corporation
+  { name: "Hugli-Chinsurah", district: "Hooghly" },
+  { name: "Bansberia", district: "Hooghly" },
+  { name: "Konnagar", district: "Hooghly" },
+  { name: "Uttarpara Kotrung", district: "Hooghly" },
+  { name: "Nabagram Colony", district: "Hooghly" },
+  { name: "Kanaipur", district: "Hooghly" },
+  { name: "Raghunathpur (PS-Dankuni)", district: "Hooghly" },
+  { name: "Dankuni", district: "Hooghly" },
+  { name: "Panchghara", district: "Hooghly" },
+  { name: "Baruipara", district: "Hooghly" },
+  { name: "Balarambati", district: "Hooghly" },
+  { name: "Singur", district: "Hooghly" },
+  { name: "Bora", district: "Hooghly" },
+
   // North 24 Parganas
   { name: "Raigachhi", district: "North 24 Parganas" },
   { name: "Barasat", district: "North 24 Parganas" },
@@ -185,22 +207,22 @@ app.get('/api/search', (req, res) => {
     return res.json({ result: `within ${exactMatch.district}` });
   }
 
-  // 2. Partial Substring Matches
+  // 2. Partial Substring Match
   const partials = constituentsData.filter(item => item.name.toLowerCase().includes(queryLower));
   if (partials.length > 0) {
     return res.json({ result: `within ${partials[0].district}` });
   }
 
-  // 3. Fuzzy Typo Match (Levenshtein)
+  // 3. Strict Fuzzy Typo Match (Distance threshold of 2 to avoid false positives)
   const fuzzy = constituentsData
     .map(item => ({ ...item, dist: levenshtein.get(queryLower, item.name.toLowerCase()) }))
     .sort((a, b) => a.dist - b.dist)[0];
 
-  if (fuzzy && fuzzy.dist <= 3) {
+  if (fuzzy && fuzzy.dist <= 2) {
     return res.json({ result: `within ${fuzzy.district}` });
   }
 
-  // Fallback
+  // Fallback for missing entries
   return res.json({ result: "not within any of this three districts" });
 });
 
