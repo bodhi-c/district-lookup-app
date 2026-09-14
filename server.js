@@ -181,15 +181,14 @@ app.get('/api/search', (req, res) => {
   const exactMatch = constituentsData.find(item => item.name.toLowerCase() === queryLower);
 
   if (exactMatch) {
-    // Uses the actual matched dataset item name to ensure proper capitalization in output
     return res.json({ 
-      result: `${exactMatch.name} is within the Urban Agglomeration of ${exactMatch.district} and may be treated as Local Journey.` 
+      result: `${exactMatch.name} <span style="color: red; font-weight: bold;">is within</span> the Urban Agglomeration of ${exactMatch.district} and may be treated as Local Journey.` 
     });
   }
 
   // Fallback response when place is not found in the dataset
   return res.json({ 
-    result: `${query} is not within the Urban Agglomeration of either North 24 Parganas or South 24 Parganas or Howrah.` 
+    result: `${query} <span style="color: red; font-weight: bold;">is not within</span> the Urban Agglomeration of either North 24 Parganas or South 24 Parganas or Howrah.` 
   });
 });
 
