@@ -27,7 +27,7 @@
       padding: 40px 30px;
       border-radius: 12px;
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-      max-width: 500px;
+      max-width: 550px;
       width: 100%;
       text-align: center;
     }
@@ -63,7 +63,7 @@
       font-size: 15px;
       font-weight: 600;
       color: #ffffff;
-      background-color: #3182ce;
+      background-color: #0d47a1;
       border: none;
       border-radius: 8px;
       cursor: pointer;
@@ -71,28 +71,20 @@
     }
 
     button:hover {
-      background-color: #2b6cb0;
+      background-color: #0a3880;
     }
 
     #result {
       margin-top: 25px;
       font-size: 16px;
       line-height: 1.6;
-      word-wrap: break-word;
       background: #f8fafc;
-      padding: 15px;
+      padding: 18px 20px;
       border-radius: 8px;
       border: 1px solid #edf2f7;
       min-height: 50px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    /* Target specific red text outputs */
-    .highlight-red {
-      color: #e53e3e;
-      font-weight: bold;
+      text-align: center;
+      display: block;
     }
   </style>
 </head>
@@ -123,7 +115,7 @@
         
         resultDiv.innerHTML = data.result;
       } catch (error) {
-        resultDiv.innerHTML = '<span style="color: #e53e3e;">An error occurred while fetching results.</span>';
+        resultDiv.innerHTML = '<span style="color: red; font-weight: bold;">An error occurred while fetching results.</span>';
       }
     });
   </script>
