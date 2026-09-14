@@ -27,10 +27,6 @@
       font-size: 18px;
       line-height: 1.5;
     }
-    .highlight-red {
-      color: red;
-      font-weight: bold;
-    }
   </style>
 </head>
 <body>
@@ -56,14 +52,9 @@
         const response = await fetch(`/api/search?place=${encodeURIComponent(placeInput)}`);
         const data = await response.json();
         
-        // Highlight "is within" or "is not within" in red font
-        let formattedResult = data.result
-          .replace(/(is within)/gi, '<span class="highlight-red">$1</span>')
-          .replace(/(is not within)/gi, '<span class="highlight-red">$1</span>');
-
-        resultDiv.innerHTML = formattedResult;
+        resultDiv.innerHTML = data.result;
       } catch (error) {
-        resultDiv.innerHTML = '<span class="highlight-red">An error occurred while fetching results.</span>';
+        resultDiv.innerHTML = '<span style="color: red;">An error occurred while fetching results.</span>';
       }
     });
   </script>
