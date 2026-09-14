@@ -1,5 +1,4 @@
 const express = require('express');
-const levenshtein = require('fast-levenshtein');
 const path = require('path');
 
 const app = express();
@@ -178,28 +177,14 @@ app.get('/api/search', (req, res) => {
 
   const queryLower = query.toLowerCase();
 
-  // 1. Check Exact Match
+  // Strict exact spelling match (case-insensitive)
   const exactMatch = constituentsData.find(item => item.name.toLowerCase() === queryLower);
+
   if (exactMatch) {
     return res.json({ result: `within ${exactMatch.district}` });
   }
 
-  // 2. Check Partial Substring Match
-  const partialMatch = constituentsData.find(item => item.name.toLowerCase().includes(queryLower));
-  if (partialMatch) {
-    return res.json({ result: `within ${partialMatch.district}` });
-  }
-
-  // 3. Strict Fuzzy Match (Typo tolerance)
-  const fuzzy = constituentsData
-    .map(item => ({ ...item, dist: levenshtein.get(queryLower, item.name.toLowerCase()) }))
-    .sort((a, b) => a.dist - b.dist)[0];
-
-  if (fuzzy && fuzzy.dist <= 2) {
-    return res.json({ result: `within ${fuzzy.district}` });
-  }
-
-  // Fallback for any place not listed under the 3 allowed districts
+  // Fallback if spelling doesn't match exactly
   return res.json({ result: "not within any of this three districts" });
 });
 
